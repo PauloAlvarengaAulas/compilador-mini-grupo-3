@@ -14,8 +14,8 @@ class Analisador_Lexico():
 
         #Operadores
         self.lexer.add('ATR', r':=')
-        self.lexer.add('SUM', r'\+')
-        self.lexer.add('SUB', r'\-')
+        self.lexer.add('SOMA', r'\+')
+        self.lexer.add('SUBTRACAO', r'\-')
         self.lexer.add('DIF',  r'<>')
         self.lexer.add('LESS_THAN_EQ', r'<=')
         self.lexer.add('GREATER_THAN_EQ', r'\>=')
@@ -25,8 +25,8 @@ class Analisador_Lexico():
         self.lexer.add('RIGHT_SHIFT', r'>>')
         self.lexer.add('LESS_THAN', r'\<')
         self.lexer.add('GREATER_THAN', r'\>')
-        self.lexer.add('TIMES', r'\*')
-        self.lexer.add('DIV', '/')
+        self.lexer.add('MULT', r'\*')
+        self.lexer.add('DIV', r'/')
         self.lexer.add('MOD', r'\%')
         self.lexer.add('AND', r'\&')
         self.lexer.add('OR', r'\|')
