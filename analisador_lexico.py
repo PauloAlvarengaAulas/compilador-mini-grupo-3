@@ -1,5 +1,4 @@
 from rply import LexerGenerator
-import re
 class Analisador_Lexico():
     def __init__(self):
         self.lexer = LexerGenerator()
@@ -19,7 +18,6 @@ class Analisador_Lexico():
         self.lexer.add('DIF',  r'<>')
         self.lexer.add('LESS_THAN_EQ', r'<=')
         self.lexer.add('GREATER_THAN_EQ', r'\>=')
-        self.lexer.add('<<<', r'<<<')
         self.lexer.add('>>>', r'>>>')
         self.lexer.add('LEFT_SHIFT', r'<<')
         self.lexer.add('RIGHT_SHIFT', r'>>')
@@ -27,8 +25,8 @@ class Analisador_Lexico():
         self.lexer.add('GREATER_THAN', r'\>')
         self.lexer.add('MULT', r'\*')
         self.lexer.add('DIV', r'/')
-        self.lexer.add('MOD', r'\%')
-        self.lexer.add('AND', r'\&')
+        self.lexer.add('MOD', r'mod')
+        self.lexer.add('AND', r'and')
         self.lexer.add('OR', r'\|')
         self.lexer.add('NOT', r'not')
 
@@ -37,6 +35,9 @@ class Analisador_Lexico():
 
         #Ignorar espaços
         self.lexer.ignore(r'\s+')
+
+        #Comentários
+        self.lexer.ignore(r'\%.*')
 
         #Estruturas
         self.lexer.add('IF', r'if')

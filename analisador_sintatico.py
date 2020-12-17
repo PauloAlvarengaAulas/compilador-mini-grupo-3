@@ -1,5 +1,5 @@
 from rply import ParserGenerator
-from ast import Integer, Soma, Subtracao, Mult, Div, Mod, Write
+from ast import Integer, Soma, Subtracao, Mult, Div, Mod, Write, Left_Shift, Right_Shift, Unsigned_Right_Shift, And
 
 
 class Parser():
@@ -7,32 +7,49 @@ class Parser():
         self.pg = ParserGenerator(
             # Uma lista com todos os nomes de tokens aceitos pelo Parser
             ['INTEGER', 'WRITE', 'OPEN_PAREN', 'CLOSE_PAREN',
-             'SEMI_COLON', 'SOMA', 'SUBTRACAO', 'MULT', 'DIV', 'MOD'],
+             'SEMI_COLON', 'SOMA', 'SUBTRACAO', 'MULT', 'DIV', 'MOD', 'LEFT_SHIFT', 'RIGHT_SHIFT', '>>>'],
              
              precedence=[
                  ('left', ['SOMA', 'SUBTRACAO']),
                  ('left', ['MULT', 'DIV']),
-                 ('left', ['MOD'])
-             ]
+                 ('left', ['MOD']),
+                 ('left', ['LEFT_SHIFT', 'RIGHT_SHIFT']),
+                 ('left', ['>>>', 'AND'])
+             ],
+             cache_id='myparser'
         )
 
     def parse(self):
         #Função que define o print na tela
-        @self.pg.production('programa : WRITE OPEN_PAREN expression CLOSE_PAREN SEMI_COLON')
-        def programa(p):
+        @self.pg.production('program : ')
+        #@self.pg.production('program : program write')
+        @self.pg.production('write : WRITE OPEN_PAREN expression CLOSE_PAREN SEMI_COLON')
+        def write(p):
             return Write(p[2])
 
         #Função que define as regras das operações da linguagem
         @self.pg.production('expression : expression SOMA expression')
+        @self.pg.production('expression : OPEN_PAREN expression SOMA expression CLOSE_PAREN')
         @self.pg.production('expression : expression SUBTRACAO expression')
         @self.pg.production('expression : expression MULT expression')
         @self.pg.production('expression : expression DIV expression')
         @self.pg.production('expression : expression MOD expression')
+        @self.pg.production('expression : expression LEFT_SHIFT expression')
+        @self.pg.production('expression : expression RIGHT_SHIFT expression')
+        @self.pg.production('expression : expression >>> expression')
         def operacoes(p):
-            esquerda = p[0]
-            direita = p[2]
-            operator = p[1]
+            if p[0] == 'OPEN_PAREN':
+                esquerda = p[1]
+                direita = p[3]
+                operator = p[2]
+
+            else:
+                esquerda = p[0]
+                direita = p[2]
+                operator = p[1]
+
             if operator.gettokentype() == 'SOMA':
+                print()
                 return Soma(esquerda, direita)
             
             elif operator.gettokentype() == 'SUBTRACAO':
@@ -46,6 +63,15 @@ class Parser():
             
             elif operator.gettokentype() == 'MOD':
                 return Mod(esquerda, direita)
+
+            elif operator.gettokentype() == 'LEFT_SHIFT':
+                return Left_Shift(esquerda, direita)
+            
+            elif operator.gettokentype() == 'RIGHT_SHIFT':
+                return Right_Shift(esquerda, direita)
+
+            elif operator.gettokentype() == '>>>':
+                return Unsigned_Right_Shift(esquerda, direita)
             else:
                 raise AssertionError('Opa, isso não é possível!')
         

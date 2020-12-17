@@ -2,7 +2,8 @@ from analisador_lexico import Analisador_Lexico
 from analisador_sintatico import Parser
 
 text_input = """
-write(4 % 2);
+write(2 + 2);
+write(2 + 2);
 """
 
 lexer = Analisador_Lexico().get_lexer()
