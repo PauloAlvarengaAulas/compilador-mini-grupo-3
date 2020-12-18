@@ -20,16 +20,18 @@ class Parser():
         )
 
     def parse(self):
-        #Função que define o print na tela
-        @self.pg.production('program : ')
-        #@self.pg.production('program : program write')
-        @self.pg.production('write : WRITE OPEN_PAREN expression CLOSE_PAREN SEMI_COLON')
+        '''@self.pg.production('program : statement')
+        @self.pg.production('program : statement SEMI_COLON')
+        @self.pg.production('program : statement SEMI_COLON program')
+        def program(p):
+            pass 
+         '''       
+        @self.pg.production('statement : WRITE OPEN_PAREN expression CLOSE_PAREN SEMI_COLON')
         def write(p):
             return Write(p[2])
 
         #Função que define as regras das operações da linguagem
         @self.pg.production('expression : expression SOMA expression')
-        @self.pg.production('expression : OPEN_PAREN expression SOMA expression CLOSE_PAREN')
         @self.pg.production('expression : expression SUBTRACAO expression')
         @self.pg.production('expression : expression MULT expression')
         @self.pg.production('expression : expression DIV expression')
@@ -38,15 +40,9 @@ class Parser():
         @self.pg.production('expression : expression RIGHT_SHIFT expression')
         @self.pg.production('expression : expression >>> expression')
         def operacoes(p):
-            if p[0] == 'OPEN_PAREN':
-                esquerda = p[1]
-                direita = p[3]
-                operator = p[2]
-
-            else:
-                esquerda = p[0]
-                direita = p[2]
-                operator = p[1]
+            esquerda = p[0]
+            direita = p[2]
+            operator = p[1]
 
             if operator.gettokentype() == 'SOMA':
                 print()
@@ -79,6 +75,10 @@ class Parser():
         @self.pg.production('expression : INTEGER')
         def numero(p):
             return Integer(int(p[0].value))
+
+        @self.pg.production('expression : OPEN_PAREN expression CLOSE_PAREN')
+        def expression_parens(p):
+            return p[1]
 
         @self.pg.error
         def error_handler(token):

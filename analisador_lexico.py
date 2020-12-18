@@ -39,6 +39,8 @@ class Analisador_Lexico():
         #Comentários
         self.lexer.ignore(r'\%.*')
 
+        self.lexer.ignore(r'\n')
+
         #Estruturas
         self.lexer.add('IF', r'if')
         self.lexer.add('ELSE', r'else')

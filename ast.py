@@ -1,4 +1,13 @@
 #Definição de classes para construção da AST(Abstract Syntax Tree) do Parser
+'''class Program():
+    def __init__(self, st):
+        self.st = st
+        self.statements.append(self.st)
+
+    def eval(self):
+        for s in self.statements:
+            return s.eval()
+'''
 class Integer():
     def __init__(self, valor):
         self.valor = valor
@@ -47,9 +56,16 @@ class And(OpBinarios):
     def eval(self):
         return self.esquerda.eval() and self.direita.eval()
 
-class Write(OpBinarios):
+class Write():
     def __init__(self, valor):
         self.valor = valor
     
     def eval(self):
         print(self.valor.eval())
+
+class Read():
+    def __init__(self, valor):
+        self.valor = valor
+    
+    def eval(self):
+        input(self.valor.eval())
