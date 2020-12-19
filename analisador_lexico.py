@@ -40,7 +40,6 @@ class Analisador_Lexico():
         self.lexer.ignore(r'\%.*')
 
         self.lexer.ignore(r'\n')
-
         #Estruturas
         self.lexer.add('IF', r'if')
         self.lexer.add('ELSE', r'else')
@@ -53,6 +52,7 @@ class Analisador_Lexico():
         self.lexer.add('WRITE', r'write')
         
         #Outros
+        self.lexer.add('END', r'end(?!\w)')
         self.lexer.add('THEN', r'then')
         self.lexer.add('PROGRAM', r'program')   
         self.lexer.add('BEGIN', r'begin')    
