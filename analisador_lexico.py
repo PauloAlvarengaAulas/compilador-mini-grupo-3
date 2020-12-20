@@ -31,7 +31,8 @@ class Analisador_Lexico():
         self.lexer.add('NOT', r'not')
 
         #Número
-        self.lexer.add('INTEGER', r'\d+')
+        self.lexer.add('INT', r'\d+')
+        self.lexer.add('INTEGER', r'integer')
 
         #Ignorar espaços
         self.lexer.ignore(r'\s+')
@@ -52,10 +53,11 @@ class Analisador_Lexico():
         self.lexer.add('WRITE', r'write')
         
         #Outros
-        self.lexer.add('END', r'end(?!\w)')
+        self.lexer.add('BEGIN', r'begin')
+        self.lexer.add('DECLARE', r'declare')
+        self.lexer.add('END', r'end')
         self.lexer.add('THEN', r'then')
-        self.lexer.add('PROGRAM', r'program')   
-        self.lexer.add('BEGIN', r'begin')    
+        self.lexer.add('PROGRAM', r'program')       
         self.lexer.add('IDENTIFIER', r'[a-zA-Z_][a-zA-Z0-9_]*')
 
     def get_lexer(self):
