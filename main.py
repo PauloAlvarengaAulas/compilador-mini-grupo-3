@@ -13,8 +13,9 @@ begin
 
     if(9 = 1) then
         write(3);
-    else if(9 <> 3) then
-        write(10);
+    else 
+        if(9 <> 3) then
+            write(10);
         end
     end
 end

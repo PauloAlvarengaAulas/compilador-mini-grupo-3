@@ -163,7 +163,7 @@ class If_stmt():
                 return self.corpo_else.eval(env)
             return Null()
 
-class Do_While():
+'''class Do_While():
     def __init__(self, condicao, corpo):
         self.condicao = condicao
         self.corpo = corpo
@@ -173,6 +173,7 @@ class Do_While():
         #self.corpo.eval(env)
         while condicao == True:
             return self.corpo.eval(env)
+'''
 
 class Write():
     def __init__(self, valor):
