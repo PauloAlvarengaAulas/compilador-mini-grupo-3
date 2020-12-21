@@ -6,10 +6,10 @@ class UnexpectedTokenError(Exception):
         return self.token
 
 class UnexpectedEndError(Exception):
-    texto = 'Missing ; in the end of the statement'
+    texto = 'Fim de declaração não esperada'
     
     def __str__(self):
-        return "Missing ; in the end of the statement"
+        return 'Fim de declaração não esperada'
 
 class LogicError(Exception):
     def __init__(self, texto):

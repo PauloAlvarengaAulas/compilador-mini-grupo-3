@@ -13,6 +13,7 @@ class Analisador_Lexico():
 
         #Operadores
         self.lexer.add('ATR', r':=')
+        self.lexer.add('IGUAL', r'=')
         self.lexer.add('SOMA', r'\+')
         self.lexer.add('SUBTRACAO', r'\-')
         self.lexer.add('DIF',  r'<>')
@@ -27,7 +28,7 @@ class Analisador_Lexico():
         self.lexer.add('DIV', r'/')
         self.lexer.add('MOD', r'mod')
         self.lexer.add('AND', r'and')
-        self.lexer.add('OR', r'\|')
+        self.lexer.add('OR', r'or')
         self.lexer.add('NOT', r'not')
 
         #Número
@@ -53,12 +54,15 @@ class Analisador_Lexico():
         self.lexer.add('WRITE', r'write')
         
         #Outros
+        self.lexer.add(',', r',')
         self.lexer.add('BEGIN', r'begin')
         self.lexer.add('DECLARE', r'declare')
         self.lexer.add('END', r'end')
         self.lexer.add('THEN', r'then')
-        self.lexer.add('PROGRAM', r'program')       
+        self.lexer.add('PROGRAM', r'program')
         self.lexer.add('IDENTIFIER', r'[a-zA-Z_][a-zA-Z0-9_]*')
+        self.lexer.add('LETRA', r'[a-zA-Z]')
+        self.lexer.add('DIGITO', r'[0-9]')
 
     def get_lexer(self):
         self._add_tokens()

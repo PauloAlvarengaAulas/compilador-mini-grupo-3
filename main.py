@@ -9,7 +9,14 @@ begin
     write(3 / 2);
     write(3 * 3);
     write(9 - 5);
-    write(a);
+    %write(a);
+
+    if(9 = 1) then
+        write(3);
+    else if(9 <> 3) then
+        write(10);
+        end
+    end
 end
 """
 

@@ -4,7 +4,7 @@ from ast import *
 from erros import *
 class ParserState(object):
     def __init__(self):
-        self.variables = {}
+        self.vars = {}
 
 class Parser():
     def __init__(self):
@@ -13,17 +13,24 @@ class Parser():
             ['INT', 'WRITE', 'OPEN_PAREN', 'CLOSE_PAREN',
              'SEMI_COLON', 'SOMA', 'SUBTRACAO', 'MULT', 'DIV', 'MOD', 'LEFT_SHIFT',
              'RIGHT_SHIFT', '>>>', 'PROGRAM', 'IDENTIFIER', 'AND', 'READ', 'DECLARE',
-             'BEGIN', 'END', 'INTEGER', 'ATR'],
+             'BEGIN', 'END', 'INTEGER', 'ATR', ',', 'IF', 'ELSE', 'THEN', 'DIF', 'IGUAL',
+             'OR', 'LESS_THAN', 'GREATER_THAN', 'LESS_THAN_EQ', 'GREATER_THAN_EQ', 'WHILE',
+             'DO'],
              
              precedence=[
+                 ('left', ['IDENTIFIER']),
                  ('left', ['WRITE']),
+                 ('left', ['INTEGER']),
+                 ('left', ['ATR']),
+                 ('left', [',']),
+                 ('left', ['IF', 'ELSE', 'END', 'THEN' , 'WHILE']),
+                 ('left', ['>>>', 'AND', 'OR']),
+                 ('left', ['MOD']),
+                 ('left', ['IGUAL', 'DIF', 'GREATER_THAN_EQ', 'GRETER_THAN', 'LESS_THAN', 'LESS_THAN_EQ']),
+                 ('left', ['LEFT_SHIFT', 'RIGHT_SHIFT']),
                  ('left', ['SOMA', 'SUBTRACAO']),
                  ('left', ['MULT', 'DIV']),
-                 ('left', ['MOD']),
-                 ('left', ['LEFT_SHIFT', 'RIGHT_SHIFT']),
-                 ('left', ['>>>', 'AND']),
-                 ('left', ['READ']),
-                 ('left', ['ATR'])
+                 ('left', ['READ'])  
              ],
              cache_id='myparser'
         )
@@ -51,6 +58,19 @@ class Parser():
             body.adiciona_statement(p[0])
             return p[1]
 
+        @self.pg.production('bloco : statement_full')
+        def bloco(state, p):
+            return Bloco(p[0])
+
+        @self.pg.production('bloco : statement_full bloco')
+        def bloco_expr(state, p):
+            if type(p[1]) is Bloco:
+                b = p[1]
+            else:
+                b = Bloco(p[1])
+            b.adiciona_statement(p[0])
+            return b
+
         @self.pg.production('statement_full : statement')
         @self.pg.production('statement_full : statement SEMI_COLON')  
         def statement_full(state, p):
@@ -68,9 +88,26 @@ class Parser():
         def read(state, p):
             return Read(p[2])
         
-        @self.pg.production('variaveis : INTEGER IDENTIFIER ATR expression SEMI_COLON')
-        def statement_assignment(state, p):
+        @self.pg.production('variaveis : INTEGER IDENTIFIER ATR expressao SEMI_COLON')
+        def atribuicao_variaveis(state, p):
             return Atribuicao(Variaveis(p[1].getstr()), p[3])
+
+        @self.pg.production('expressao : expression')
+        @self.pg.production('expressao : expression ,')
+        def expressoes(state, p):
+            return p[0]
+
+        @self.pg.production('expression : IF OPEN_PAREN expression CLOSE_PAREN THEN bloco END')
+        def if_sem_else(state, p):
+            return If_stmt(condicao=p[2], corpo=p[5])
+
+        @self.pg.production('expression : IF OPEN_PAREN expression CLOSE_PAREN THEN bloco ELSE bloco END')
+        def if_sem_com_else(state, p):
+            return If_stmt(condicao=p[2], corpo=p[5], corpo_else=p[7])
+
+        @self.pg.production('expression : DO bloco WHILE OPEN_PAREN expression CLOSE_PAREN')
+        def while_stmt(state, p):
+            return Do_While(condicao=p[4], corpo=p[1])
 
         #Função que define as regras das operações da linguagem
         @self.pg.production('expression : expression SOMA expression')
@@ -82,6 +119,13 @@ class Parser():
         @self.pg.production('expression : expression RIGHT_SHIFT expression')
         @self.pg.production('expression : expression >>> expression')
         @self.pg.production('expression : expression AND expression')
+        @self.pg.production('expression : expression DIF expression')
+        @self.pg.production('expression : expression IGUAL expression')
+        @self.pg.production('expression : expression OR expression')
+        @self.pg.production('expression : expression GREATER_THAN_EQ expression')
+        @self.pg.production('expression : expression GREATER_THAN expression')
+        @self.pg.production('expression : expression LESS_THAN expression')
+        @self.pg.production('expression : expression LESS_THAN_EQ expression')
         def operacoes(state, p):
             esquerda = p[0]
             direita = p[2]
@@ -113,6 +157,28 @@ class Parser():
 
             elif operator.gettokentype() == 'AND':
                 return And(esquerda, direita)
+
+            elif operator.gettokentype() == 'DIF':
+                return Diff(esquerda, direita)
+
+            elif operator.gettokentype() == 'IGUAL':
+                return Igual(esquerda, direita)
+
+            elif operator.gettokentype() == 'OR':
+                return Or(esquerda, direita)
+            
+            elif operator.gettokentype() == 'GREATER_THAN_EQ':
+                return Gte(esquerda, direita) 
+            
+            elif operator.gettokentype() == 'GREATER_THAN':
+                return Gt(esquerda, direita) 
+            
+            elif operator.gettokentype() == 'LESS_THAN':
+                return Lt(esquerda, direita) 
+            
+            elif operator.gettokentype() == 'LESS_THAN_EQ':
+                return Lte(esquerda, direita) 
+
             else:
                 raise AssertionError('Opa, isso não é possível!')
         
@@ -123,7 +189,7 @@ class Parser():
 
         @self.pg.production('expression : IDENTIFIER')
         def identifier(state, p):
-            return p[0]
+            return Variaveis(p[0].getstr())
 
         @self.pg.production('expression : OPEN_PAREN expression CLOSE_PAREN')
         def expression_parens(state, p):
